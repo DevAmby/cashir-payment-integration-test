@@ -43,13 +43,17 @@ class DashboardController extends Controller
                 break;
         }
 
+        // Debug: Log the query being executed
+        \Log::info('Query executed: ' . $query->toSql(), $query->getBindings());
+
 
         $transactions = $query->with('user')->get();
         // dd($transactions);
         // $transactions = Transactions::with('user')->get();
         $totalTransactions = $query->sum('amount');
         $totalFlutterwave = $query->where('payment_method', 'flutterwave')->sum('amount');
-        $totalPaystack = $query->where('payment_method', 'paystack')->sum('amount');
+        $totalPaystack = Transactions::where('payment_method', 'paystack')->sum('amount');
+        // dd($totalPaystack);
         return view('dashboard', compact('transactions', 'totalTransactions', 'totalFlutterwave', 'totalPaystack', 'dateFilter'));
     }
 }
